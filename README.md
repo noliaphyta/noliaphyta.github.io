@@ -1,4 +1,6 @@
-# Mundana - Free Bootstrap HTML Blogging Template
+# Using Mundana - Free Bootstrap HTML Blogging Template
+
+For a fake news website...
 
 Free HTML Bootstrap Blogging Template by [Sal](https://www.wowthemes.net).
 
