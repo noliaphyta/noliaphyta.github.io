@@ -1,4 +1,7 @@
-# Using Mundana - Free Bootstrap HTML Blogging Template
+# Truth News, a news source that sounds like the truth.
+and one you can trust will give you facts.
+
+Using Mundana - Free Bootstrap HTML Blogging Template
 
 For a fake news website...
 
