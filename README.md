@@ -1,4 +1,4 @@
-# Ethan Chan
+# [Ethan Chan](/index)
 
 I used to have a nice, like, 'indie-esque' linktree thing here... but I broke it.
 
