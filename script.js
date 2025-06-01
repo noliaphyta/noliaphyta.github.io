@@ -22,7 +22,7 @@ function getInformation() {
             // Append your specified HTML content with random width and class
             new_div.innerHTML = `
                 <a class="${rotateClass1}" class="imgtxt">
-                    <img src="./public/apis.png" alt="bee" style="width:${width1}px">
+                    <img src="./public/apis.min.png" alt="bee" style="width:${width1}px">
                 </a>
             `;
             
@@ -31,7 +31,7 @@ function getInformation() {
                 let rotateClass2 = Math.random() < 0.5 ? 'rotate' : 'rotateleft';
                 new_div.innerHTML += `
                 <a class="${rotateClass2}" class="imgtxt" href="/jardin">
-                    <img src="./public/apis.png" alt="bee" style="width:${width2}px">
+                    <img src="./public/apis.min.png" alt="bee" style="width:${width2}px">
                 </a>
             `;
             }
