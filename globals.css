@@ -3,6 +3,8 @@
   --foreground: black;
   --primary-color: #074327;
   --background-image: url("public/wallpaper.png");
+  --marquee-bg: #074327;
+  --marquee-fg: #e8f5e9;
 }
 
 body.dark-mode {
@@ -10,6 +12,8 @@ body.dark-mode {
   --foreground: #e0d8bd;
   --primary-color: #89c192;
   --background-image: url("public/wallpaper.png");
+  --marquee-bg: #89c192;
+  --marquee-fg: #042814;
 }
 
 body {
@@ -17,12 +21,13 @@ body {
   color: var(--foreground);
   margin: 0;
   padding: 0;
-  height: 100vh;
+  min-height: 100vh;
   background-color: var(--background);
   background-image: var(--background-image);
   background-repeat: repeat;
   background-size: 30vw;
   background-attachment: scroll;
+  transition: background-color 0.4s ease, color 0.4s ease;
 }
 
 h1 {
@@ -39,6 +44,7 @@ p {
   margin-bottom: 20px;
 }
 
+/* ── Dark mode toggle ───────────────────────────── */
 .toggle-button {
   text-align: center;
   color: white;
@@ -47,47 +53,66 @@ p {
   cursor: pointer;
   font-size: inherit;
 }
-
 .toggle-button:hover {
   opacity: 0.8;
 }
 
-img.u-photo {
-  border-radius: 50%;
+/* ── Retro marquee bar ──────────────────────────── */
+.marquee-bar {
+  display: block;
+  background-color: var(--marquee-bg);
+  color: var(--marquee-fg);
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  padding: 4px 0;
+  font-family: monospace;
+  transition: background-color 0.4s ease, color 0.4s ease;
 }
-ul {
-  padding: 0;
-  list-style: none;
-}
 
-
-
-.content-before-loading
-{
+/* ── Bee grid ───────────────────────────────────── */
+/* Fixed: was .content-before-loading (class) but HTML uses #content-before-loading (ID) */
+#content-before-loading {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
-  height: 100vh; /* Adjust based on your layout */
+  width: 100%;
   overflow: hidden;
-  width: 100vw;
 }
 
 .sub-block {
- display: flex;
+  display: flex;
   justify-content: center;
-  overflow: hidden;
-  gap: 20px; /* Adds space between the images */
+  flex-wrap: wrap;
+  gap: 0px;
   width: 100vw;
 }
 
+/* ── Fade-in for new rows ───────────────────────── */
+.sub-block.fade-in {
+  opacity: 0;
+  transform: translateY(12px);
+}
+
+.sub-block.visible {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+/* ── Bee links ──────────────────────────────────── */
 .imgtxt {
+  display: inline-block;
   width: fit-content;
   height: fit-content;
   line-height: 1.6;
-  padding: 2em;
-
+  padding: 1.2em;
+  transition: transform 0.2s ease;
 }
 
+.imgtxt img {
+  display: block;
+  transition: transform 0.2s ease;
+}
 
 .rotate:hover img,
 .rotate:focus img {
@@ -99,17 +124,14 @@ ul {
   transform: rotate(-4deg);
 }
 
-.rotate:hover .text,
-a:focus .text {
-  opacity: 1;
-}
-
 a,
 a:hover,
 a:focus {
   color: transparent;
   background: transparent;
+  text-decoration: none;
 }
+
 .link {
   color: teal;
 }
@@ -119,3 +141,36 @@ a:focus {
   color: white;
 }
 
+img.u-photo {
+  border-radius: 50%;
+}
+
+ul {
+  padding: 0;
+  list-style: none;
+}
+
+/* ── Loading indicator ──────────────────────────── */
+#loading-indicator {
+  text-align: center;
+  font-family: monospace;
+  font-size: 28px;
+  color: var(--primary-color);
+  padding: 24px 0 40px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  letter-spacing: 0.1em;
+  user-select: none;
+}
+
+.dot {
+  display: inline-block;
+  animation: blink 1.2s infinite;
+}
+.dot:nth-child(2) { animation-delay: 0.2s; }
+.dot:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes blink {
+  0%, 80%, 100% { opacity: 0; }
+  40%            { opacity: 1; }
+}
