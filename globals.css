@@ -60,6 +60,10 @@ p {
 /* ── Retro marquee bar ──────────────────────────── */
 .marquee-bar {
   display: block;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
   background-color: var(--marquee-bg);
   color: var(--marquee-fg);
   font-size: 13px;
@@ -67,6 +71,7 @@ p {
   padding: 4px 0;
   font-family: monospace;
   transition: background-color 0.4s ease, color 0.4s ease;
+  z-index: 10;
 }
 
 /* ── Bee grid ───────────────────────────────────── */

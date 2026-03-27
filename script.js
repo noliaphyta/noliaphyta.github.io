@@ -74,7 +74,18 @@ function getInformation() {
     batchCount++;
     isLoading = false;
     hideLoader();
+
+    // After appending, check immediately if we're still close to the bottom
+    // (handles slow connections where one batch wasn't enough to push content down)
+    if (isNearBottom()) getInformation();
   }, 600);
+}
+
+function isNearBottom() {
+  return (
+    document.documentElement.scrollTop + document.documentElement.clientHeight >=
+    document.documentElement.scrollHeight - 600 // load when 600px from bottom
+  );
 }
 
 // Throttle scroll so we don't fire on every pixel
@@ -83,10 +94,7 @@ window.addEventListener("scroll", () => {
   if (scrollTimeout) return;
   scrollTimeout = setTimeout(() => {
     scrollTimeout = null;
-    const nearBottom =
-      document.documentElement.scrollTop + document.documentElement.clientHeight >=
-      document.documentElement.scrollHeight - 200; // trigger 200px before bottom
-    if (nearBottom) getInformation();
+    if (isNearBottom()) getInformation();
   }, 150);
 });
 
