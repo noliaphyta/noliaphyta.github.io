@@ -44,7 +44,7 @@ function buildBatch() {
 
     // MAIN IMAGE
     const mainLink = document.createElement("a");
-    mainLink.href = "/public/jardin.png";
+    mainLink.href = "/jardin";
     mainLink.className = Math.random() < 0.5 ? 'rotate imgtxt' : 'rotateleft imgtxt';
     const mainImg = document.createElement("img");
     mainImg.src = "/public/apis.png";
@@ -59,7 +59,7 @@ function buildBatch() {
     let extras = 0;
     while (Math.random() < 0.85 && extras < 12) {
       const extraLink = document.createElement("a");
-      extraLink.href = "/public/jardin.png";
+      extraLink.href = "/jardin";
       extraLink.className = Math.random() < 0.5 ? 'rotate imgtxt' : 'rotateleft imgtxt';
       const extraImg = document.createElement("img");
       extraImg.src = "/public/apis.png";
