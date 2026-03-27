@@ -1,83 +1,109 @@
+// DARK MODE TOGGLE
 function toggleDarkMode() {
   document.body.classList.toggle('dark-mode');
   localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
 }
+
 if (localStorage.getItem('darkMode') === 'true') {
   document.body.classList.add('dark-mode');
 }
 
+// ELEMENTS
 const container = document.getElementById("content-before-loading");
 const sentinel = document.getElementById("sentinel");
 
-// Guard: sentinel must be inside container for insertBefore to work
+// CHECK HTML STRUCTURE
 if (!sentinel || !container.contains(sentinel)) {
   console.error("Fix your HTML: #sentinel must be a child of #content-before-loading");
 }
 
+// SCROLL CONTROL
 let isLoading = false;
 let batchCount = 0;
-const MAX_BATCHES = 30;
+const MAX_BATCHES = 9999;
+const BATCH_SIZE = 10;           // rows per batch
+const PRELOAD_THRESHOLD = 1500;  // px from bottom to preload
 
+// FADE-IN OBSERVER
+const fadeObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      fadeObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.1 });
+
+// BUILD IMAGE BATCH
 function buildBatch() {
   const fragment = document.createDocumentFragment();
-  for (let i = 0; i < 10; i++) {
+
+  for (let i = 0; i < BATCH_SIZE; i++) {
     const row = document.createElement("div");
-    row.className = "sub-block fade-in";
-    const width1 = Math.floor(Math.random() * 90) + 10;
-    const rotateClass1 = Math.random() < 0.5 ? 'rotate' : 'rotateleft';
-    row.innerHTML = `
-      <a class="${rotateClass1} imgtxt" href="/jardin">
-        <img src="./public/apis.png" alt="bee" style="width:${width1}px">
-      </a>
-    `;
+    row.className = "sub-block";
+
+    // MAIN IMAGE
+    const mainLink = document.createElement("a");
+    mainLink.href = "/public/jardin.png";
+    mainLink.className = Math.random() < 0.5 ? 'rotate imgtxt' : 'rotateleft imgtxt';
+    const mainImg = document.createElement("img");
+    mainImg.src = "/public/apis.png";
+    mainImg.alt = "bee";
+    mainImg.style.width = Math.floor(Math.random() * 90 + 10) + "px";
+    mainImg.className = "fade-img";
+    fadeObserver.observe(mainImg);
+    mainLink.appendChild(mainImg);
+    row.appendChild(mainLink);
+
+    // EXTRA IMAGES
     let extras = 0;
     while (Math.random() < 0.85 && extras < 12) {
-      const width2 = Math.floor(Math.random() * 90) + 10;
-      const rotateClass2 = Math.random() < 0.5 ? 'rotate' : 'rotateleft';
-      row.innerHTML += `
-        <a class="${rotateClass2} imgtxt" href="/jardin">
-          <img src="./public/apis.png" alt="bee" style="width:${width2}px">
-        </a>
-      `;
+      const extraLink = document.createElement("a");
+      extraLink.href = "/public/jardin.png";
+      extraLink.className = Math.random() < 0.5 ? 'rotate imgtxt' : 'rotateleft imgtxt';
+      const extraImg = document.createElement("img");
+      extraImg.src = "/public/apis.png";
+      extraImg.alt = "bee";
+      extraImg.style.width = Math.floor(Math.random() * 90 + 10) + "px";
+      extraImg.className = "fade-img";
+      fadeObserver.observe(extraImg);
+      extraLink.appendChild(extraImg);
+      row.appendChild(extraLink);
       extras++;
     }
+
     fragment.appendChild(row);
   }
 
   container.insertBefore(fragment, sentinel);
-
-  requestAnimationFrame(() => {
-    container.querySelectorAll('.fade-in').forEach(row => {
-      row.classList.add('visible');
-      row.classList.remove('fade-in');
-    });
-    batchCount++;
-    isLoading = false;
-  });
+  batchCount++;
+  isLoading = false;
 }
 
-function getInformation() {
+// CHECK IF NEXT BATCH SHOULD LOAD
+function checkLoad() {
   if (isLoading || batchCount >= MAX_BATCHES) return;
-  isLoading = true;
-  // Small delay so isLoading state settles before fillUntilScrollable re-checks
-  setTimeout(buildBatch, 60);
-}
 
-const observer = new IntersectionObserver(
-  (entries) => {
-    if (entries[0].isIntersecting) getInformation();
-  },
-  { rootMargin: "0px 0px 800px 0px" }
-);
-observer.observe(sentinel);
+  const sentinelRect = sentinel.getBoundingClientRect();
+  const viewportHeight = window.innerHeight;
 
-// Fill until page is scrollable, waiting for each batch to finish before checking again
-function fillUntilScrollable() {
-  if (batchCount >= MAX_BATCHES) return;
-  if (document.documentElement.scrollHeight <= document.documentElement.clientHeight) {
-    if (!isLoading) getInformation();
-    // Wait longer than the setTimeout in getInformation before re-checking
-    setTimeout(fillUntilScrollable, 200);
+  if (sentinelRect.top - viewportHeight < PRELOAD_THRESHOLD) {
+    isLoading = true;
+    setTimeout(buildBatch, 50); // slight delay to prevent blocking
   }
 }
+
+// INITIAL FILL UNTIL SCROLLABLE
+function fillUntilScrollable() {
+  if (document.documentElement.scrollHeight <= document.documentElement.clientHeight) {
+    checkLoad();
+    setTimeout(fillUntilScrollable, 100);
+  }
+}
+
+// SCROLL & RESIZE LISTENERS
+window.addEventListener('scroll', checkLoad);
+window.addEventListener('resize', checkLoad);
+
+// START INITIAL PRELOAD
 fillUntilScrollable();

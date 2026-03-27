@@ -179,3 +179,23 @@ ul {
   0%, 80%, 100% { opacity: 0; }
   40%            { opacity: 1; }
 }
+
+/* FADE-IN IMAGES */
+.fade-img {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.fade-img.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ROTATION STYLES */
+.rotate { transform: rotate(5deg); }
+.rotateleft { transform: rotate(-5deg); }
+
+/* IMAGE ROWS */
+.sub-block { margin-bottom: 10px; display: flex; flex-wrap: wrap; gap: 5px; }
+.imgtxt img { display: block; }
