@@ -11,8 +11,6 @@ const container = document.getElementById("content-before-loading");
 const sentinel = document.getElementById("sentinel");
 
 let isLoading = false;
-let batchCount = 0;
-const MAX_BATCHES = 30;
 
 function buildBatch() {
   const fragment = document.createDocumentFragment();
@@ -44,7 +42,8 @@ function buildBatch() {
     fragment.appendChild(row);
   }
 
-  container.appendChild(fragment);
+  // Insert new rows *before* the sentinel so it always stays at the very bottom
+  container.insertBefore(fragment, sentinel);
 
   // Animate new rows in on next frame
   requestAnimationFrame(() => {
@@ -52,21 +51,18 @@ function buildBatch() {
       row.classList.add('visible');
       row.classList.remove('fade-in');
     });
+    isLoading = false;
   });
-
-  batchCount++;
-  isLoading = false;
 }
 
 function getInformation() {
-  if (isLoading || batchCount >= MAX_BATCHES) return;
+  if (isLoading) return;
   isLoading = true;
   buildBatch();
 }
 
-// Watch a sentinel element placed at the bottom of the content.
-// rootMargin "800px" means the observer fires when the sentinel
-// is still 800px below the visible viewport — well before arrival.
+// Watch the sentinel at the bottom of content.
+// rootMargin "800px" fires the callback well before the user reaches the end.
 const observer = new IntersectionObserver(
   (entries) => {
     if (entries[0].isIntersecting) getInformation();
@@ -77,7 +73,7 @@ const observer = new IntersectionObserver(
 observer.observe(sentinel);
 
 // Initial fill — keep loading until the page is taller than the viewport
-// so there's always something to scroll into
+// so there is always content to scroll into.
 function fillUntilScrollable() {
   if (document.documentElement.scrollHeight <= document.documentElement.clientHeight) {
     getInformation();
